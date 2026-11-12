@@ -30,7 +30,7 @@ WEB_URL = ""
 WEB_WA_LINK = "https://wa.me/923377217981?text=" + "Assalam%20o%20alaikum!%20Main%20Colab%20tool%20use%20karta%20hoon%20aur%20Premium%20Web%20App%20ka%20existing-user%20offer%20lena%20chahta%20hoon."
 WA_CANVA_LINK = "https://wa.me/923377217981?text=" + "Assalam%20o%20alaikum!%20Mujhe%20Canva%20Pro%20Lifetime%20Access%20chahiye.%20Price%20kya%20hai%3F"
 WA_ADS_LINK = "https://wa.me/923377217981?text=" + "Assalam%20o%20alaikum!%20Mujhe%20AdSense%20Approved%20Service%20chahiye."
-CHANNEL_URL = "https://whatsapp.com/channel/0029Vb8grPM1SWssTWxLZm3L"
+CHANNEL_URL = "https://whatsapp.com/channel/0029Vb8vMKg7T8ba7Mg6w82s"
 
 EVENT_TAGS = [
     "[laughter]", "[sigh]", "[confirmation-en]", "[question-en]",
