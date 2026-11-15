@@ -13,7 +13,7 @@ from google.colab.output import eval_js
 # CONFIGURATION
 # ==========================================
 
-api_url = 'https://script.google.com/macros/s/AKfycbyzCCE7woVjrbeaccr1T1I534DxzUiwh1_iDPQp_INwocXvXI-qMSjhaX0RLeeTVvc/exec'
+api_url = 'https://script.google.com/macros/s/AKfycbzePUme8b5O7PMGiHsA9zVSYLhFOmtvb99dgyp7mcxDu2PhcGBMmBr1NJsOfgO_s0A/exec'
 
 secret_key = 'sheru_secure_key_2026'
 
