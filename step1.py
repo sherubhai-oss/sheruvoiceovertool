@@ -1,195 +1,165 @@
-# ==========================================
-# SheRu VoIcE TooLs — ACCESS GATE
-# ==========================================
-
-import urllib.request
-import urllib.parse
-import json
+import requests
 import builtins
+from google.colab import output
+from IPython.display import display, HTML
+from getpass import getpass
+
+# =====================================
+# SHERU VOICE TOOLS CONFIGURATION
+# =====================================
+
+API_URL = "https://script.google.com/macros/s/AKfycbzdyk_IXLY0Ik_-4xo5k0W2asfdV8cM7KC6E1rD9dOliPGFcgAubPWAsb1Fz9NKkTT7/exec"
+
+DEVICE_PAGE_URL = API_URL + "?action=devicePage"
+
+SECRET_KEY = "sheru_secure_key_2026"
 
 builtins._ok = False
 
-# ==========================================
-# CONFIGURATION
-# ==========================================
 
-api_url = 'https://script.google.com/macros/s/AKfycbwhna0l0z-qONOLCcaHvajxGYQWxFCyw7_-TlbvFwSi2p-fUV-tm55-Ui2xg-Okglc/exec'
+# =====================================
+# GMAIL INPUT
+# =====================================
 
-secret_key = 'sheru_secure_key_2026'
+email = input("Enter Your Gmail: ").strip().lower()
 
-# ==========================================
-# EMAIL INPUT
-# ==========================================
+if not email or "@" not in email:
+    raise Exception("Please enter a valid Gmail address.")
+
+
+# =====================================
+# AUTOMATIC DEVICE ID RETRIEVAL
+# =====================================
+
+print("Verifying your device...")
+
+device_id = output.eval_js("""
+new Promise((resolve, reject) => {
+
+    let iframe = document.createElement("iframe");
+
+    iframe.style.display = "none";
+    iframe.src = """ + repr(DEVICE_PAGE_URL) + """;
+
+    let completed = false;
+
+    function receiveDevice(event) {
+
+        if (
+            event.data &&
+            event.data.type === "SHERU_DEVICE_ID" &&
+            event.data.deviceId
+        ) {
+
+            if (!completed) {
+                completed = true;
+
+                window.removeEventListener(
+                    "message",
+                    receiveDevice
+                );
+
+                iframe.remove();
+
+                resolve(event.data.deviceId);
+            }
+        }
+    }
+
+    window.addEventListener("message", receiveDevice);
+
+    document.body.appendChild(iframe);
+
+    setTimeout(() => {
+
+        if (!completed) {
+
+            window.removeEventListener(
+                "message",
+                receiveDevice
+            );
+
+            iframe.remove();
+
+            reject("Device ID could not be retrieved.");
+
+        }
+
+    }, 20000);
+
+})
+""")
+
+
+# =====================================
+# SERVER VERIFICATION
+# =====================================
 
 try:
 
-    em = input(
-        'Enter your registered Gmail, then press Enter: '
-    ).strip().lower()
+    response = requests.get(
+        API_URL,
+        params={
+            "key": SECRET_KEY,
+            "email": email,
+            "deviceId": device_id
+        },
+        timeout=30
+    )
 
-except Exception:
+    result = response.json()
 
-    em = ''
+    status = result.get("status", "")
 
-if not em:
 
-    print('⚠️ No email entered.')
+    # =================================
+    # ACCESS GRANTED
+    # =================================
 
-else:
+    if status == "ok":
 
-    # ==========================================
-    # DEVICE ID INPUT
-    # ==========================================
+        builtins._ok = True
 
-    device_id = input(
-        'Paste your Device ID from Authentication Webpage: '
-    ).strip()
+        print("\nACCESS GRANTED")
+        print("Welcome to SheRu Voice Tools!")
 
-    if not device_id:
+        print("Plan:", result.get("plan", ""))
+        print("Username:", result.get("username", ""))
+        print("Expiry:", result.get("expiry", ""))
 
-        print('⚠️ Device ID is required.')
+
+    # =================================
+    # ACCESS DENIED
+    # =================================
+
+    elif status == "device_mismatch":
+
+        print("\nDEVICE NOT AUTHORIZED")
+        print("This Gmail is already registered on another device.")
+
+    elif status == "expired":
+
+        print("\nSUBSCRIPTION EXPIRED")
+
+    elif status == "off":
+
+        print("\nACCOUNT DISABLED")
+
+    elif status == "not_found":
+
+        print("\nGMAIL NOT REGISTERED")
+
+    elif status == "bad_key":
+
+        print("\nINVALID API KEY")
 
     else:
 
-        try:
+        print("\nVERIFICATION FAILED:", status)
 
-            params = {
-                'key': secret_key,
-                'email': em,
-                'deviceId': device_id
-            }
 
-            request_url = (
-                api_url
-                + '?'
-                + urllib.parse.urlencode(params)
-            )
+except Exception as e:
 
-            req = urllib.request.Request(
-                request_url,
-                headers={
-                    'User-Agent': 'Mozilla/5.0'
-                }
-            )
+    print("\nCONNECTION ERROR:", str(e))
 
-            with urllib.request.urlopen(
-                req,
-                timeout=20
-            ) as r:
-
-                data = json.loads(
-                    r.read().decode()
-                )
-
-            status = data.get('status', '')
-
-            # ACCESS GRANTED
-
-            if status == 'ok':
-
-                builtins._ok = True
-
-                print('\n✅ Access Granted!')
-
-                print(
-                    'Welcome:',
-                    data.get('username', 'User')
-                )
-
-                print(
-                    'Plan:',
-                    data.get('plan', '')
-                )
-
-                print(
-                    'Expiry:',
-                    data.get('expiry', '')
-                )
-
-                if data.get('device') == 'registered':
-
-                    print(
-                        '📱 This device has been registered successfully.'
-                    )
-
-                else:
-
-                    print(
-                        '📱 Registered device verified.'
-                    )
-
-                print('Now run Step 2 below. 👇')
-
-            # DEVICE MISMATCH
-
-            elif status == 'device_mismatch':
-
-                builtins._ok = False
-
-                from IPython.display import display, HTML
-
-                display(HTML("""
-                <div style="font-family:Arial;max-width:580px;
-                background:#24131b;border:1px solid #ff6b6b;
-                border-radius:14px;padding:24px;color:white;">
-
-                <h2 style="color:#ff9a9a;">
-                🔒 Device Not Authorized
-                </h2>
-
-                <p>
-                This Gmail is already registered on another device.
-                Access from this device is blocked.
-                </p>
-
-                <p>
-                📧 automationy156@gmail.com<br>
-                📱 0337-7217981
-                </p>
-
-                <a href="https://wa.me/923377217981"
-                style="background:#25d366;color:white;
-                padding:12px 20px;border-radius:8px;
-                text-decoration:none;">
-                Contact Admin
-                </a>
-
-                </div>
-                """))
-
-            elif status == 'off':
-
-                print('🔴 Your account is currently disabled.')
-
-            elif status == 'expired':
-
-                print('⏳ Your Subscription Has Expired.')
-
-                print(
-                    'Expiry:',
-                    data.get('expires', '')
-                )
-
-                print('Contact: 0337-7217981')
-
-            elif status == 'not_found':
-
-                print('🔒 This Gmail is not registered.')
-
-            elif status == 'bad_key':
-
-                print('❌ Invalid Security Key.')
-
-            else:
-
-                print('❌ Access Denied.')
-
-                print('Server Response:', data)
-
-        except Exception as e:
-
-            builtins._ok = False
-
-            print('⚠️ Connection error.')
-
-            print('Error:', str(e))
+    builtins._ok = False
