@@ -13,7 +13,7 @@ builtins._ok = False
 # CONFIGURATION
 # ==========================================
 
-api_url = 'https://script.google.com/macros/s/AKfycbyaDgk7KsW8a9FFCpnVxSCaMCV40-seQIhjVV3I1kld6ONHuBc1KwVyBSrZOvCah3k/exec'
+api_url = 'https://script.google.com/macros/s/AKfycbwhna0l0z-qONOLCcaHvajxGYQWxFCyw7_-TlbvFwSi2p-fUV-tm55-Ui2xg-Okglc/exec'
 
 secret_key = 'sheru_secure_key_2026'
 
