@@ -8,7 +8,7 @@ from getpass import getpass
 # SHERU VOICE TOOLS CONFIGURATION
 # =====================================
 
-API_URL = "https://script.google.com/macros/s/AKfycbzdyk_IXLY0Ik_-4xo5k0W2asfdV8cM7KC6E1rD9dOliPGFcgAubPWAsb1Fz9NKkTT7/exec"
+API_URL = "https://script.google.com/macros/s/AKfycbxfpb-HWCM_MuUtC8A0PaZK7brcMHd9IG8OG6pYg0eHiRTjG40l7JIbgaV0WxUq22Y/exec"
 
 DEVICE_PAGE_URL = API_URL + "?action=devicePage"
 
